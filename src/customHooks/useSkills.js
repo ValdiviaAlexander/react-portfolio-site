@@ -32,7 +32,7 @@ export const useSkills = () => {
 
     useEffect(() => {
         dispatch({ type: actionTypes.fetch });
-    }, []);
+    }, [dispatch]);
 
     const generateLanguageCountObj = (allLanguageList) => {
         const notNullLanguageList = allLanguageList.filter(language => language != null);
