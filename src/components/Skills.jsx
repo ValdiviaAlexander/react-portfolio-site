@@ -21,7 +21,7 @@ export const Skills = () => {
         .catch(() => {
             dispatch({ type: actionTypes.error });
         });
-    }, []);
+    }, [dispatch]);
     const generateLanguageCountObj = (allLanguageList) => {
         const notNullLanguageList = allLanguageList.filter(language => language != null);
         const uniqueLanguageList = [...new Set(notNullLanguageList)];

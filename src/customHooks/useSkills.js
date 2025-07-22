@@ -30,10 +30,6 @@ export const useSkills = () => {
         }
     }, [state.requestState, fetchReposApi]);
 
-    useEffect(() => {
-        dispatch({ type: actionTypes.fetch });
-    }, [dispatch]);
-
     const generateLanguageCountObj = (allLanguageList) => {
         const notNullLanguageList = allLanguageList.filter(language => language != null);
         const uniqueLanguageList = [...new Set(notNullLanguageList)]
