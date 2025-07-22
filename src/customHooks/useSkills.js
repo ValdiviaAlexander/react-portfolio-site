@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useCallback } from 'react';
 import axios from 'axios';
 
 import { skillReducer, initialState, actionTypes } from '../reducers/skillReducer';
@@ -7,23 +7,28 @@ import { requestStates } from '../constants';
 export const useSkills = () => {
     const [state, dispatch] = useReducer(skillReducer, initialState);
 
-    const fetchReposApi = () => {
+    const fetchReposApi = useCallback(() => {
         dispatch({ type: actionTypes.fetch });
         axios.get('https://api.github.com/users/ValdiviaAlexander/repos')
-            .then((response) => {
-            const languageList = response.data.map(res => res.language)
-            const countedLanguageList = generateLanguageCountObj(languageList)
-            dispatch({ type: actionTypes.success, payload: {languageList: countedLanguageList } });
-            })
-            .catch(() => {
-            dispatch({ type: actionTypes.error });
+        .then((response) => {
+        const languageList = response.data.map(res => res.language);
+        const countedLanguageList = generateLanguageCountObj(languageList);
+        dispatch({ type: actionTypes.success, payload: { languageList: countedLanguageList } });
+        })
+        .catch(() => {
+        dispatch({ type: actionTypes.error });
         });
-    }
+    }, [dispatch]);
 
     useEffect(() => {
-        if (state.requestState !== requestStates.loading) { return; }
-        fetchReposApi();
-    }, [state.requestState]);
+        dispatch({ type: actionTypes.fetch });
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (state.requestState === requestStates.loading) {
+            fetchReposApi();
+        }
+    }, [state.requestState, fetchReposApi]);
 
     useEffect(() => {
         dispatch({ type: actionTypes.fetch });
