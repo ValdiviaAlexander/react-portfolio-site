@@ -1,12 +1,14 @@
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useEffect, useReducer } from 'react';
-import axios from 'axios';
-import { skillReducer, initialState, actionTypes } from '../reducers/skillReducer';
 import { requestStates } from '../constants';
+import { useSkills } from '../customHooks/useSkills';
+import axios from 'axios';
+import React, { useEffect } from "react";
+import { actionTypes } from "../reducers/skillReducer";
 
 export const Skills = () => {
-    const [state, dispatch] = useReducer(skillReducer, initialState)
+    const [sortedLanguageList, fetchRequestState, convertCountToPercentage, dispatch] = useSkills();
+
 
     useEffect(() => {
         dispatch({ type: actionTypes.fetch });
@@ -32,15 +34,6 @@ export const Skills = () => {
         });
     };
 
-    const convertCountToPercentage = (count) => {
-        if (count > 10) { return 100; }
-        return count * 10;
-    };
-
-    const sortedLanguageList = () => (
-        state.languageList.sort((firstLang, nextLang) =>  nextLang.count - firstLang.count)
-    )
-
     return (
         <div id="skills">
             <div className="container">
@@ -49,12 +42,12 @@ export const Skills = () => {
                 </div>
                 <div className="skills-container">
                     {
-                        state.requestState === requestStates.loading && (
+                        fetchRequestState === requestStates.loading && (
                             <p className="description">取得中...</p>
                         )
                     }
                     {
-                        state.requestState === requestStates.success && (
+                        fetchRequestState === requestStates.success && (
                         sortedLanguageList().map((item, index) => (
                             <div className="skill-item" key={index}>
                             <p className="description"><strong>{item.language}</strong></p>
@@ -64,7 +57,7 @@ export const Skills = () => {
                         )
                     }
                     {
-                        state.requestState === requestStates.error && (
+                        fetchRequestState === requestStates.error && (
                             <p className="description">エラーが発生しました</p>
                         )
                     }
